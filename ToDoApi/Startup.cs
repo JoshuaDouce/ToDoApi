@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NSwag.AspNetCore;
 using ToDoApi.Models;
 
 namespace ToDoApi
@@ -22,6 +23,7 @@ namespace ToDoApi
         {
             services.AddDbContext<ToDoItemContext>(opt => opt.UseInMemoryDatabase("ToDoApp"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSwaggerDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -30,6 +32,9 @@ namespace ToDoApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                app.UseSwagger();
+                app.UseSwaggerUi3();
             }
             else
             {

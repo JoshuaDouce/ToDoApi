@@ -11,7 +11,10 @@ namespace ToDoApi.Controllers
         public IActionResult GetRoot() {
             var response = new
             {
-                href = Url.Link(nameof(GetRoot), null)
+                href = Url.Link(nameof(GetRoot), null),
+                toDoItems = new {
+                    href = Url.Link(nameof(ToDoItemController.GetToDoItems), null)
+                }
             };
 
             return Ok(response);

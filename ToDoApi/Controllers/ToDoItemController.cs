@@ -28,7 +28,9 @@ namespace ToDoApi.Controllers
         }
 
         // GET: api/ToDO
-        [HttpGet]
+        [HttpGet(Name = nameof(GetToDoItems))]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<IEnumerable<ToDoItem>>> GetToDoItems()
         {
             return await _toDoItemContext.ToDoItems.ToListAsync();
@@ -36,6 +38,8 @@ namespace ToDoApi.Controllers
 
         // GET api/ToDo/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ToDoItem>> GetToDoItem(long id)
         {
             var todoItem = await _toDoItemContext.ToDoItems.FindAsync(id);
