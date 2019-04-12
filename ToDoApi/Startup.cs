@@ -28,6 +28,7 @@ namespace ToDoApi
             services
                 .AddMvc(options => {
                     options.Filters.Add<JsonExceptionFilter>();
+                    options.Filters.Add<RequireHttpsOrCloseAttribute>();
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
@@ -58,7 +59,6 @@ namespace ToDoApi
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
