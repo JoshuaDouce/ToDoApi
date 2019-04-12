@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSwag.AspNetCore;
+using ToDoApi.Filters;
 using ToDoApi.Models;
 
 namespace ToDoApi
@@ -23,8 +24,15 @@ namespace ToDoApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ToDoItemContext>(opt => opt.UseInMemoryDatabase("ToDoApp"));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services
+                .AddMvc(options => {
+                    options.Filters.Add<JsonExceptionFilter>();
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
             services.AddSwaggerDocument();
+
             services.AddApiVersioning(options => {
                 options.DefaultApiVersion = new ApiVersion(1, 0);
                 options.ApiVersionReader = new MediaTypeApiVersionReader();
