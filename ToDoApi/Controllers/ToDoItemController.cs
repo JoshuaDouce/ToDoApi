@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -14,17 +15,10 @@ namespace ToDoApi.Controllers
     [ApiController]
     public class ToDoItemController : ControllerBase
     {
-        private readonly ToDoItemContext _toDoItemContext;
-
-        public ToDoItemController(ToDoItemContext toDoItemContext)
+        private readonly ToDoAppDbContext _context;
+        public ToDoItemController(ToDoAppDbContext context)
         {
-            _toDoItemContext = toDoItemContext;
-
-            if (_toDoItemContext.ToDoItems.Count() == 0)
-            {
-                _toDoItemContext.ToDoItems.Add(new ToDoItem { Name = "Item 1"});
-                _toDoItemContext.SaveChanges();
-            }
+            _context = context;
         }
 
         // GET: api/ToDO
@@ -33,23 +27,29 @@ namespace ToDoApi.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<IEnumerable<ToDoItem>>> GetToDoItems()
         {
-            return await _toDoItemContext.ToDoItems.ToListAsync();
+            throw new NotImplementedException();
         }
 
         // GET api/ToDo/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = nameof(GetToDoItem))]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<ToDoItem>> GetToDoItem(long id)
         {
-            var todoItem = await _toDoItemContext.ToDoItems.FindAsync(id);
+            var entity = await _context.ToDoItems.SingleOrDefaultAsync(x => x.Id == id);
 
-            if (todoItem == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return todoItem;
+            var resource = new ToDoItem {
+                Href = Url.Link(nameof(GetToDoItem), new { id = entity.Id }),
+                Name = entity.Name,
+                IsComplete = entity.IsComplete
+            };
+
+            return resource;
         }
 
         // POST api/<controller>
