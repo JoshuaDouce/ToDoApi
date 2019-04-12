@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NSwag.AspNetCore;
 using ToDoApi.Filters;
 using ToDoApi.Models;
+using ToDoApi.Services;
 
 namespace ToDoApi
 {
@@ -24,6 +25,9 @@ namespace ToDoApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ToDoAppDbContext>(opt => opt.UseInMemoryDatabase("ToDoApp"));
+
+            //scoped means new instance is created for every incoming request
+            services.AddScoped<IToDoItemService, DefaultToDoItemService>();
 
             services
                 .AddMvc(options => {

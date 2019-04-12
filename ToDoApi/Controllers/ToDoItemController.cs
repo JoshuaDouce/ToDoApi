@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoApi.Models;
+using ToDoApi.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,10 +16,10 @@ namespace ToDoApi.Controllers
     [ApiController]
     public class ToDoItemController : ControllerBase
     {
-        private readonly ToDoAppDbContext _context;
-        public ToDoItemController(ToDoAppDbContext context)
+        private readonly IToDoItemService _toDoItemService;
+        public ToDoItemController(IToDoItemService service)
         {
-            _context = context;
+            _toDoItemService = service;
         }
 
         // GET: api/ToDO
@@ -36,20 +37,16 @@ namespace ToDoApi.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<ToDoItem>> GetToDoItem(long id)
         {
-            var entity = await _context.ToDoItems.SingleOrDefaultAsync(x => x.Id == id);
+            var room = await _toDoItemService.GetToDoItemAsync(id);
 
-            if (entity == null)
+            if (room != null)
             {
-                return NotFound();
+                room.Href = Url.Link(nameof(GetToDoItem), new { id });
+
+                return room;
             }
 
-            var resource = new ToDoItem {
-                Href = Url.Link(nameof(GetToDoItem), new { id = entity.Id }),
-                Name = entity.Name,
-                IsComplete = entity.IsComplete
-            };
-
-            return resource;
+            return NotFound();
         }
 
         // POST api/<controller>
