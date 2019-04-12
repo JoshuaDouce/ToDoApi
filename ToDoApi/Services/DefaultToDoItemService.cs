@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using ToDoApi.Models;
 
@@ -10,10 +8,12 @@ namespace ToDoApi.Services
     public class DefaultToDoItemService : IToDoItemService
     {
         private readonly ToDoAppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public DefaultToDoItemService(ToDoAppDbContext context)
+        public DefaultToDoItemService(ToDoAppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<ToDoItem> GetToDoItemAsync(long id)
@@ -25,12 +25,7 @@ namespace ToDoApi.Services
                 return null;
             }
 
-            return new ToDoItem
-            {
-                Href = null, //Url.Link(nameof(GetToDoItem), new { id = entity.Id }),
-                Name = entity.Name,
-                IsComplete = entity.IsComplete
-            };
+            return _mapper.Map<ToDoItem>(entity);
 
         }
     }
