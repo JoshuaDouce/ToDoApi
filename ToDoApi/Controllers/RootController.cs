@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ToDoApi.Models;
 
 namespace ToDoApi.Controllers
 {
@@ -10,12 +11,10 @@ namespace ToDoApi.Controllers
     {
         [HttpGet(Name = nameof(GetRoot))]
         public IActionResult GetRoot() {
-            var response = new
+            var response = new RootResponse
             {
-                href = Url.Link(nameof(GetRoot), null),
-                toDoItems = new {
-                    href = Url.Link(nameof(ToDoItemController.GetToDoItems), null)
-                }
+                Self = Link.To(nameof(GetRoot)),
+                ToDoItems = Link.To(nameof(ToDoItemController.GetToDoItems))
             };
 
             return Ok(response);
