@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ToDoApi.Models;
 using ToDoApi.Services;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,9 +24,17 @@ namespace ToDoApi.Controllers
         [HttpGet(Name = nameof(GetToDoItems))]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<IEnumerable<ToDoItem>>> GetToDoItems()
+        public async Task<ActionResult<Collection<ToDoItem>>> GetToDoItems()
         {
-            throw new NotImplementedException();
+            var items = await _toDoItemService.GetToDoItemsAsync();
+
+            var collection = new Collection<ToDoItem>
+            {
+                Self = Link.ToCollection(nameof(GetToDoItems)),
+                Value = items.ToArray()
+            };
+
+            return collection;
         }
 
         // GET api/ToDo/5

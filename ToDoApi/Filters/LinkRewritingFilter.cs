@@ -44,7 +44,7 @@ namespace ToDoApi.Filters
 
             var linkProperties = allProperties.Where(p => p.CanWrite && p.PropertyType == typeof(Link));
 
-            foreach (var linkProp in allProperties)
+            foreach (var linkProp in linkProperties)
             {
                 var rewritten = rewriter.LinkRewrite(linkProp.GetValue(model) as Link);
 

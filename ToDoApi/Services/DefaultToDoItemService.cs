@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,12 +10,19 @@ namespace ToDoApi.Services
     public class DefaultToDoItemService : IToDoItemService
     {
         private readonly ToDoAppDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly IConfigurationProvider _mappingConfig;
 
-        public DefaultToDoItemService(ToDoAppDbContext context, IMapper mapper)
+        public DefaultToDoItemService(ToDoAppDbContext context, IMapper mapper, IConfigurationProvider configurationProvider)
         {
             _context = context;
-            _mapper = mapper;
+            _mappingConfig = configurationProvider;
+        }
+
+        public async Task<IEnumerable<ToDoItem>> GetToDoItemsAsync()
+        {
+            var query = _context.ToDoItems.ProjectTo<ToDoItem>(_mappingConfig);
+
+            return await query.ToArrayAsync();
         }
 
         public async Task<ToDoItem> GetToDoItemAsync(long id)
@@ -26,24 +34,29 @@ namespace ToDoApi.Services
                 return null;
             }
 
-            return _mapper.Map<ToDoItem>(entity);
+            var mapper = _mappingConfig.CreateMapper();
+            return mapper.Map<ToDoItem>(entity);
 
         }
 
-        public async Task<ToDoItemReponse> PostToDoItemAsync(ToDoItem toDoItem)
+        public async Task<ToDoItemResponse> PostToDoItemAsync(ToDoItem toDoItem)
         {
-            var entity = _mapper.Map<ToDoItemEntity>(toDoItem);
+            var mapper = _mappingConfig.CreateMapper();
+
+            var entity = mapper.Map<ToDoItemEntity>(toDoItem);
 
             _context.ToDoItems.Add(entity);
             await _context.SaveChangesAsync();
 
-            var rewritten = _mapper.Map<ToDoItem>(entity);
+            var rewritten = mapper.Map<ToDoItem>(entity);
 
-            return new ToDoItemReponse { Id = entity.Id, Item = rewritten};
+            return new ToDoItemResponse { Id = entity.Id, Item = rewritten};
         }
 
-        public async Task<ToDoItemReponse> PutToDoItemAsync(long id, ToDoItem toDoItem)
+        public async Task<ToDoItemResponse> PutToDoItemAsync(long id, ToDoItem toDoItem)
         {
+            var mapper = _mappingConfig.CreateMapper();
+
             var entity = await _context.ToDoItems.SingleOrDefaultAsync(x => x.Id == id);
 
             if (entity == null) return null;
@@ -54,12 +67,12 @@ namespace ToDoApi.Services
             _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            var rewritten = _mapper.Map<ToDoItem>(entity);
+            var rewritten = mapper.Map<ToDoItem>(entity);
 
-            return new ToDoItemReponse { Id = entity.Id, Item = rewritten };
+            return new ToDoItemResponse { Id = entity.Id, Item = rewritten };
         }
 
-        public async Task<ToDoItemReponse> DeleteToDoItemAsync(long id)
+        public async Task<ToDoItemResponse> DeleteToDoItemAsync(long id)
         {
             var entity = await _context.ToDoItems.SingleOrDefaultAsync(x => x.Id == id);
 
@@ -68,7 +81,9 @@ namespace ToDoApi.Services
             _context.ToDoItems.Remove(entity);
             await _context.SaveChangesAsync();
 
-            return new ToDoItemReponse { Id = entity.Id, Item = null };
+            return new ToDoItemResponse { Id = entity.Id, Item = null };
         }
+
+
     }
 }

@@ -14,7 +14,7 @@ namespace ToDoApi.Controllers
             var response = new RootResponse
             {
                 Self = Link.To(nameof(GetRoot)),
-                ToDoItems = Link.To(nameof(ToDoItemController.GetToDoItems))
+                ToDoItems = Link.ToCollection(nameof(ToDoItemController.GetToDoItems))
             };
 
             return Ok(response);

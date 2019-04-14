@@ -36,5 +36,15 @@ namespace ToDoApi.Models
                 Relations = null
             };
         }
+
+        public static Link ToCollection(string routeName, object routeValues = null) {
+            return new Link()
+            {
+                RouteName = routeName,
+                Values = routeValues,
+                Method = GetMethod,
+                Relations = new[] { "collection" }
+            };
+        }
     }
 }

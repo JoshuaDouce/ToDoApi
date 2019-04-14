@@ -6,9 +6,10 @@ namespace ToDoApi.Services
 {
     public interface IToDoItemService
     {
+        Task<IEnumerable<ToDoItem>> GetToDoItemsAsync();
         Task<ToDoItem> GetToDoItemAsync(long id);
-        Task<ToDoItemReponse> PostToDoItemAsync(ToDoItem toDoItem);
-        Task<ToDoItemReponse> PutToDoItemAsync(long id, ToDoItem toDoItem);
-        Task<ToDoItemReponse> DeleteToDoItemAsync(long id);
+        Task<ToDoItemResponse> PostToDoItemAsync(ToDoItem toDoItem);
+        Task<ToDoItemResponse> PutToDoItemAsync(long id, ToDoItem toDoItem);
+        Task<ToDoItemResponse> DeleteToDoItemAsync(long id);
     }
 }
