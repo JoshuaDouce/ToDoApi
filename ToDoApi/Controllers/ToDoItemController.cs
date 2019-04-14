@@ -58,8 +58,15 @@ namespace ToDoApi.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Put(long id, ToDoItem item)
         {
+            var response = await _toDoItemService.PutToDoItemAsync(id, item);
+
+            if (response == null) return BadRequest();
+
+            return NoContent();
         }
 
         // DELETE api/<controller>/5

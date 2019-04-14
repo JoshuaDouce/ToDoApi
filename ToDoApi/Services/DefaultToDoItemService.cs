@@ -41,5 +41,22 @@ namespace ToDoApi.Services
 
             return new ToDoItemReponse { Id = entity.Id, Item = rewritten};
         }
+
+        public async Task<ToDoItemReponse> PutToDoItemAsync(long id, ToDoItem toDoItem)
+        {
+            var entity = await _context.ToDoItems.SingleOrDefaultAsync(x => x.Id == id);
+
+            if (entity == null) return null;
+
+            entity.IsComplete = toDoItem.IsComplete;
+            entity.Name = toDoItem.Name;
+
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            var rewritten = _mapper.Map<ToDoItem>(entity);
+
+            return new ToDoItemReponse { Id = entity.Id, Item = rewritten };
+        }
     }
 }
