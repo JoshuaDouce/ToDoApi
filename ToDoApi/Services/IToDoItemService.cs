@@ -9,5 +9,6 @@ namespace ToDoApi.Services
         Task<ToDoItem> GetToDoItemAsync(long id);
         Task<ToDoItemReponse> PostToDoItemAsync(ToDoItem toDoItem);
         Task<ToDoItemReponse> PutToDoItemAsync(long id, ToDoItem toDoItem);
+        Task<ToDoItemReponse> DeleteToDoItemAsync(long id);
     }
 }

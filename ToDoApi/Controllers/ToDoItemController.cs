@@ -71,8 +71,15 @@ namespace ToDoApi.Controllers
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(long id)
         {
+            var response = await _toDoItemService.DeleteToDoItemAsync(id);
+
+            if (response == null) return NotFound();
+
+            return NoContent();
         }
     }
 }

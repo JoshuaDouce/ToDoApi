@@ -58,5 +58,17 @@ namespace ToDoApi.Services
 
             return new ToDoItemReponse { Id = entity.Id, Item = rewritten };
         }
+
+        public async Task<ToDoItemReponse> DeleteToDoItemAsync(long id)
+        {
+            var entity = await _context.ToDoItems.SingleOrDefaultAsync(x => x.Id == id);
+
+            if (entity == null) return null;
+
+            _context.ToDoItems.Remove(entity);
+            await _context.SaveChangesAsync();
+
+            return new ToDoItemReponse { Id = entity.Id, Item = null };
+        }
     }
 }
