@@ -47,8 +47,13 @@ namespace ToDoApi.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]string value)
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<ToDoItem>> PostToDoItem(ToDoItem item)
         {
+            var response = await _toDoItemService.PostToDoItemAsync(item);
+
+            return CreatedAtAction(nameof(GetToDoItem), new { id = response.Id}, response.Item);
         }
 
         // PUT api/<controller>/5

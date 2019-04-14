@@ -10,6 +10,8 @@ namespace ToDoApi.Infrastructure
             CreateMap<ToDoItemEntity, ToDoItem>()
                 .ForMember(dest => dest.Self, opt => opt.MapFrom(src => Link.To(
                     nameof(Controllers.ToDoItemController.GetToDoItem), new { id = src.Id})));
+
+            CreateMap<ToDoItem, ToDoItemEntity>();
         }
     }
 }
