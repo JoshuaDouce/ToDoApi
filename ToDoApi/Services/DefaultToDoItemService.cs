@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ToDoApi.Models;
 
@@ -84,6 +85,19 @@ namespace ToDoApi.Services
             return new ToDoItemResponse { Id = entity.Id, Item = null };
         }
 
+        public async Task<PagedResults<ToDoItem>> GetToDoItemsAsync(PagingOptions options)
+        {
+            var query = _context.ToDoItems.ProjectTo<ToDoItem>(_mappingConfig);
 
+            var allItems = await query.ToArrayAsync();
+
+            var pagedItems = allItems.Skip(options.Offset.Value).Take(options.Limit.Value);
+
+            return new PagedResults<ToDoItem>
+            {
+                Items = pagedItems,
+                TotalSize = allItems.Count()
+            };
+        }
     }
 }

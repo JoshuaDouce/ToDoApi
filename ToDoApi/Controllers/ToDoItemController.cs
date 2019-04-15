@@ -20,7 +20,7 @@ namespace ToDoApi.Controllers
             _toDoItemService = service;
         }
 
-        // GET: api/ToDO
+        // GET: api/ToDo
         [HttpGet(Name = nameof(GetToDoItems))]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -36,6 +36,27 @@ namespace ToDoApi.Controllers
 
             return collection;
         }
+
+        //GET: api/ToDo/{queryString}
+        [HttpGet("pagedToDoItems",Name = nameof(GetPagedToDoItems))]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Collection<ToDoItem>>> GetPagedToDoItems([FromQuery] PagingOptions pagingOptions = null)
+        {
+            var items = await _toDoItemService.GetToDoItemsAsync(pagingOptions);
+
+            var collection = new PagedCollection<ToDoItem>
+            {
+                Self = Link.ToCollection(nameof(GetToDoItems)),
+                Value = items.Items.ToArray(),
+                Size = items.TotalSize,
+                Offset = pagingOptions.Offset,
+                Limit = pagingOptions.Limit
+            };
+
+            return collection;
+        }
+
 
         // GET api/ToDo/5
         [HttpGet("{id}", Name = nameof(GetToDoItem))]
