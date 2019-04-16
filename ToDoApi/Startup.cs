@@ -26,6 +26,8 @@ namespace ToDoApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<PagingOptions>(Configuration.GetSection("DefaultPagingOptions"));
+
             services.AddDbContext<ToDoAppDbContext>(opt => opt.UseInMemoryDatabase("ToDoApp"));
 
             //scoped means new instance is created for every incoming request

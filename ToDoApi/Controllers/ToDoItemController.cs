@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoApi.Models;
 using ToDoApi.Services;
 using System.Linq;
+using Microsoft.Extensions.Options;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,9 +16,12 @@ namespace ToDoApi.Controllers
     public class ToDoItemController : ControllerBase
     {
         private readonly IToDoItemService _toDoItemService;
-        public ToDoItemController(IToDoItemService service)
+        private readonly PagingOptions _defaultPagingOptions;
+
+        public ToDoItemController(IToDoItemService service, IOptions<PagingOptions> defaultPagingOptions)
         {
             _toDoItemService = service;
+            _defaultPagingOptions = defaultPagingOptions.Value;
         }
 
         // GET: api/ToDo
@@ -41,8 +45,12 @@ namespace ToDoApi.Controllers
         [HttpGet("pagedToDoItems",Name = nameof(GetPagedToDoItems))]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         public async Task<ActionResult<Collection<ToDoItem>>> GetPagedToDoItems([FromQuery] PagingOptions pagingOptions = null)
         {
+            pagingOptions.Offset = pagingOptions.Offset ?? _defaultPagingOptions.Offset;
+            pagingOptions.Limit = pagingOptions.Limit ?? _defaultPagingOptions.Limit;
+
             var items = await _toDoItemService.GetToDoItemsAsync(pagingOptions);
 
             var collection = new PagedCollection<ToDoItem>
