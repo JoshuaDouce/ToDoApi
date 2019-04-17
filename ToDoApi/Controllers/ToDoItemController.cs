@@ -53,15 +53,12 @@ namespace ToDoApi.Controllers
 
             var items = await _toDoItemService.GetToDoItemsAsync(pagingOptions);
 
-            var collection = new PagedCollection<ToDoItem>
-            {
-                Self = Link.ToCollection(nameof(GetToDoItems)),
-                Value = items.Items.ToArray(),
-                Size = items.TotalSize,
-                Offset = pagingOptions.Offset,
-                Limit = pagingOptions.Limit
-            };
-
+            var collection = PagedCollection<ToDoItem>.Create(
+                Link.ToCollection(nameof(GetToDoItems)),
+                items.Items.ToArray(),
+                items.TotalSize,
+                pagingOptions);
+    
             return collection;
         }
 

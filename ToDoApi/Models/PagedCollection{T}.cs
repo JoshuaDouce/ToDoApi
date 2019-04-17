@@ -43,12 +43,62 @@ namespace ToDoApi.Models
 
         private static Link GetLastLink(Link self, int size, PagingOptions pagingOptions)
         {
-            throw new NotImplementedException();
+            if (pagingOptions?.Limit == null) return null;
+
+            var limit = pagingOptions.Limit.Value;
+
+            if (size <= limit)
+            {
+                return null;
+            }
+
+            var offset = Math.Ceiling((size - (double)limit) / limit) * limit;
+
+            var parameters = new RouteValueDictionary(self.Values)
+            {
+                ["limit"] = limit,
+                ["offset"] = offset
+            };
+
+            var newLink = ToCollection(self.RouteName, parameters);
+
+            return newLink;
         }
 
         private static Link GetPreviousLink(Link self, int size, PagingOptions pagingOptions)
         {
-            throw new NotImplementedException();
+            if (pagingOptions?.Offset == null) return null;
+            if (pagingOptions?.Limit == null) return null;
+
+            var limit = pagingOptions.Limit.Value;
+            var offset = pagingOptions.Offset.Value;
+
+            if (offset == 0)
+            {
+                return null;
+            }
+
+            if (offset > size)
+            {
+                return GetLastLink(self, size, pagingOptions);
+            }
+
+            var previousPage = Math.Max(offset - limit, 0);
+
+            if (previousPage <= 0)
+            {
+                return self;
+            }
+
+            var parameters = new RouteValueDictionary(self.Values)
+            {
+                ["limit"] = limit,
+                ["offset"] = previousPage
+            };
+
+            var newLink = ToCollection(self.RouteName, parameters);
+
+            return newLink;
         }
 
         private static Link GetNextLink(Link self, int size, PagingOptions pagingOptions)
