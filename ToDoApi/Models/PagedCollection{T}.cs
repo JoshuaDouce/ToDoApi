@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 
 namespace ToDoApi.Models
@@ -52,7 +53,27 @@ namespace ToDoApi.Models
 
         private static Link GetNextLink(Link self, int size, PagingOptions pagingOptions)
         {
-            throw new NotImplementedException();
+            if (pagingOptions?.Offset == null) return null;
+            if (pagingOptions?.Limit == null) return null;
+
+            var limit = pagingOptions.Limit.Value;
+            var offset = pagingOptions.Offset.Value;
+
+            var nextPage = offset + limit;
+
+            if (nextPage >= size)
+            {
+                return null;
+            }
+
+            var parameters = new RouteValueDictionary(self.Values) {
+                ["limit"] = limit,
+                ["offset"] = nextPage
+            };
+
+            var newLink = ToCollection(self.RouteName, parameters);
+
+            return newLink;
         }
     }
 }
