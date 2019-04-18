@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using ToDoApi.Infrastructure;
 
 namespace ToDoApi.Models
 {
@@ -9,11 +11,21 @@ namespace ToDoApi.Models
         public string[] OrderBy { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            throw new System.NotImplementedException();
+            var processor = new SortOptionsProcessor<T, TEntity>(OrderBy);
+
+            var validTerms = processor.GetValidTerms().Select(x => x.Name);
+
+            var invalidTerms = processor.GetAllTerms().Select(x => x.Name).Except(validTerms, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var invalidTerm in invalidTerms)
+            {
+                yield return new ValidationResult($"Invalid sort term {invalidTerm}", new[] { nameof(OrderBy) });
+            }
         }
 
         public IQueryable<TEntity> Apply(IQueryable<TEntity> query) {
-            throw new System.NotImplementedException();
+            var processor = new SortOptionsProcessor<T, TEntity>(OrderBy);
+            return processor.Apply(query);
         }
     }
 }

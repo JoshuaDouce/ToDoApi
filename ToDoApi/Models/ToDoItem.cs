@@ -7,7 +7,6 @@ namespace ToDoApi.Models
         [Sortable]
         public string Name { get; set; }
 
-        [Sortable]
         public bool IsComplete { get; set; }
 
     }

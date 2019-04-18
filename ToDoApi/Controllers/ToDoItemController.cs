@@ -28,6 +28,7 @@ namespace ToDoApi.Controllers
         [HttpGet(Name = nameof(GetToDoItems))]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         public async Task<ActionResult<Collection<ToDoItem>>> GetToDoItems([FromQuery] SortOptions<ToDoItem, ToDoItemEntity> sortOptions)
         {
             var items = await _toDoItemService.GetToDoItemsAsync(sortOptions);
