@@ -26,6 +26,13 @@ namespace ToDoApi.Services
             return await query.ToArrayAsync();
         }
 
+        public async Task<IEnumerable<ToDoItem>> GetToDoItemsAsync(SortOptions<ToDoItem, ToDoItemEntity> sortOptions)
+        {
+            var query = sortOptions.Apply(_context.ToDoItems).ProjectTo<ToDoItem>(_mappingConfig);
+
+            return await query.ToArrayAsync();
+        }
+
         public async Task<ToDoItem> GetToDoItemAsync(long id)
         {
             var entity = await _context.ToDoItems.SingleOrDefaultAsync(x => x.Id == id);
