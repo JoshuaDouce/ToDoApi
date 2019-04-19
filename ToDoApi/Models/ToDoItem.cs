@@ -4,7 +4,7 @@ namespace ToDoApi.Models
 {
     public class ToDoItem : Resource
     {
-        [Sortable]
+        [Sortable(Default = true)]
         public string Name { get; set; }
 
         public bool IsComplete { get; set; }
