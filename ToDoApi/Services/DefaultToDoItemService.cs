@@ -13,7 +13,7 @@ namespace ToDoApi.Services
         private readonly ToDoAppDbContext _context;
         private readonly IConfigurationProvider _mappingConfig;
 
-        public DefaultToDoItemService(ToDoAppDbContext context, IMapper mapper, IConfigurationProvider configurationProvider)
+        public DefaultToDoItemService(ToDoAppDbContext context, IConfigurationProvider configurationProvider)
         {
             _context = context;
             _mappingConfig = configurationProvider;
@@ -26,11 +26,43 @@ namespace ToDoApi.Services
             return await query.ToArrayAsync();
         }
 
-        public async Task<IEnumerable<ToDoItem>> GetToDoItemsAsync(SortOptions<ToDoItem, ToDoItemEntity> sortOptions)
+        public async Task<PagedResults<ToDoItem>> GetToDoItemsAsync(
+            SortOptions<ToDoItem, ToDoItemEntity> sortOptions,
+            PagingOptions pagingOptions,
+            SearchOptions<ToDoItem, ToDoItemEntity> searchOptions)
         {
-            var query = sortOptions.Apply(_context.ToDoItems).ProjectTo<ToDoItem>(_mappingConfig);
+            IQueryable<ToDoItemEntity> query = _context.ToDoItems;
+            query = searchOptions.Apply(query);
+            query = sortOptions.Apply(query);
 
-            return await query.ToArrayAsync();
+            var size = await query.CountAsync();
+
+            var items = await query
+                .Skip(pagingOptions.Offset.Value)
+                .Take(pagingOptions.Limit.Value)
+                .ProjectTo<ToDoItem>(_mappingConfig)
+                .ToArrayAsync();
+
+            return new PagedResults<ToDoItem>
+            {
+                Items = items,
+                TotalSize = size
+            };
+        }
+
+        public async Task<PagedResults<ToDoItem>> GetToDoItemsAsync(PagingOptions options)
+        {
+            var query = _context.ToDoItems.ProjectTo<ToDoItem>(_mappingConfig);
+
+            var allItems = await query.ToArrayAsync();
+
+            var pagedItems = allItems.Skip(options.Offset.Value).Take(options.Limit.Value);
+
+            return new PagedResults<ToDoItem>
+            {
+                Items = pagedItems,
+                TotalSize = allItems.Count()
+            };
         }
 
         public async Task<ToDoItem> GetToDoItemAsync(long id)
@@ -90,21 +122,6 @@ namespace ToDoApi.Services
             await _context.SaveChangesAsync();
 
             return new ToDoItemResponse { Id = entity.Id, Item = null };
-        }
-
-        public async Task<PagedResults<ToDoItem>> GetToDoItemsAsync(PagingOptions options)
-        {
-            var query = _context.ToDoItems.ProjectTo<ToDoItem>(_mappingConfig);
-
-            var allItems = await query.ToArrayAsync();
-
-            var pagedItems = allItems.Skip(options.Offset.Value).Take(options.Limit.Value);
-
-            return new PagedResults<ToDoItem>
-            {
-                Items = pagedItems,
-                TotalSize = allItems.Count()
-            };
         }
     }
 }

@@ -29,40 +29,24 @@ namespace ToDoApi.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<Collection<ToDoItem>>> GetToDoItems([FromQuery] SortOptions<ToDoItem, ToDoItemEntity> sortOptions)
-        {
-            var items = await _toDoItemService.GetToDoItemsAsync(sortOptions);
-
-            var collection = new Collection<ToDoItem>
-            {
-                Self = Link.ToCollection(nameof(GetToDoItems)),
-                Value = items.ToArray()
-            };
-
-            return collection;
-        }
-
-        //GET: api/ToDo/{queryString}
-        [HttpGet("pagedToDoItems",Name = nameof(GetPagedToDoItems))]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(400)]
-        public async Task<ActionResult<Collection<ToDoItem>>> GetPagedToDoItems([FromQuery] PagingOptions pagingOptions = null)
+        public async Task<ActionResult<Collection<ToDoItem>>> GetToDoItems(
+            [FromQuery] SortOptions<ToDoItem, ToDoItemEntity> sortOptions,
+            [FromQuery] SearchOptions<ToDoItem, ToDoItemEntity> searchOptions,
+            [FromQuery] PagingOptions pagingOptions = null)
         {
             pagingOptions.Offset = pagingOptions.Offset ?? _defaultPagingOptions.Offset;
             pagingOptions.Limit = pagingOptions.Limit ?? _defaultPagingOptions.Limit;
 
-            var items = await _toDoItemService.GetToDoItemsAsync(pagingOptions);
+            var items = await _toDoItemService.GetToDoItemsAsync(sortOptions, pagingOptions, searchOptions);
 
             var collection = PagedCollection<ToDoItem>.Create(
                 Link.ToCollection(nameof(GetToDoItems)),
                 items.Items.ToArray(),
                 items.TotalSize,
                 pagingOptions);
-    
+
             return collection;
         }
-
 
         // GET api/ToDo/5
         [HttpGet("{id}", Name = nameof(GetToDoItem))]
