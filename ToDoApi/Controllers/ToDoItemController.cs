@@ -54,11 +54,11 @@ namespace ToDoApi.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<ToDoItem>> GetToDoItem(long id)
         {
-            var room = await _toDoItemService.GetToDoItemAsync(id);
+            var toDoItem = await _toDoItemService.GetToDoItemAsync(id);
 
-            if (room != null)
+            if (toDoItem != null)
             {
-                return room;
+                return toDoItem;
             }
 
             return NotFound();

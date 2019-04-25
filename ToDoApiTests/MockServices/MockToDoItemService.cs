@@ -8,33 +8,38 @@ namespace ToDoApiTests.MockServices
 {
     class MockToDoItemService : IToDoItemService
     {
-        private readonly List<ToDoItem> _toDoItems;
+        private readonly List<ToDoItemEntity> _toDoItems;
         public MockToDoItemService()
         {
-            _toDoItems = new List<ToDoItem>()
+            _toDoItems = new List<ToDoItemEntity>()
             {
-                new ToDoItem()
+                new ToDoItemEntity()
                 {
+                    Id = 1,
                     Name = "Item One",
                     IsComplete = false
                 },
-                new ToDoItem()
+                new ToDoItemEntity()
                 {
+                    Id = 2,
                     Name = "Item Two",
                     IsComplete = false
                 },
-                new ToDoItem()
+                new ToDoItemEntity()
                 {
+                    Id = 3,
                     Name = "Item Three",
                     IsComplete = true
                 },
-                new ToDoItem()
+                new ToDoItemEntity()
                 {
+                    Id = 4,
                     Name = "Item Four",
                     IsComplete = false
                 },
-                new ToDoItem()
+                new ToDoItemEntity()
                 {
+                    Id = 5,
                     Name = "Item Five",
                     IsComplete = true
                 }
@@ -48,7 +53,15 @@ namespace ToDoApiTests.MockServices
 
         public Task<ToDoItem> GetToDoItemAsync(long id)
         {
-            throw new System.NotImplementedException();
+            var entity = _toDoItems.Where(a => a.Id == id).FirstOrDefault();
+
+            var item = new ToDoItem()
+            {
+                Name = entity.Name,
+                IsComplete = entity.IsComplete
+            };
+
+            return Task.FromResult(item);
         }
 
         public Task<PagedResults<ToDoItem>> GetToDoItemsAsync(SortOptions<ToDoItem, ToDoItemEntity> sortOptions, PagingOptions pagingOptions, SearchOptions<ToDoItem, ToDoItemEntity> searchOptions)
