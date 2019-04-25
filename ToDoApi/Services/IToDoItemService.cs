@@ -6,7 +6,6 @@ namespace ToDoApi.Services
 {
     public interface IToDoItemService
     {
-        Task<IEnumerable<ToDoItem>> GetToDoItemsAsync();
         Task<PagedResults<ToDoItem>> GetToDoItemsAsync(
             SortOptions<ToDoItem, ToDoItemEntity> sortOptions, 
             PagingOptions pagingOptions,

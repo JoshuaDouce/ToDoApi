@@ -19,13 +19,6 @@ namespace ToDoApi.Services
             _mappingConfig = configurationProvider;
         }
 
-        public async Task<IEnumerable<ToDoItem>> GetToDoItemsAsync()
-        {
-            var query = _context.ToDoItems.ProjectTo<ToDoItem>(_mappingConfig);
-
-            return await query.ToArrayAsync();
-        }
-
         public async Task<PagedResults<ToDoItem>> GetToDoItemsAsync(
             SortOptions<ToDoItem, ToDoItemEntity> sortOptions,
             PagingOptions pagingOptions,
@@ -50,21 +43,6 @@ namespace ToDoApi.Services
             };
         }
 
-        public async Task<PagedResults<ToDoItem>> GetToDoItemsAsync(PagingOptions options)
-        {
-            var query = _context.ToDoItems.ProjectTo<ToDoItem>(_mappingConfig);
-
-            var allItems = await query.ToArrayAsync();
-
-            var pagedItems = allItems.Skip(options.Offset.Value).Take(options.Limit.Value);
-
-            return new PagedResults<ToDoItem>
-            {
-                Items = pagedItems,
-                TotalSize = allItems.Count()
-            };
-        }
-
         public async Task<ToDoItem> GetToDoItemAsync(long id)
         {
             var entity = await _context.ToDoItems.SingleOrDefaultAsync(x => x.Id == id);
@@ -76,7 +54,6 @@ namespace ToDoApi.Services
 
             var mapper = _mappingConfig.CreateMapper();
             return mapper.Map<ToDoItem>(entity);
-
         }
 
         public async Task<ToDoItemResponse> PostToDoItemAsync(ToDoItem toDoItem)
