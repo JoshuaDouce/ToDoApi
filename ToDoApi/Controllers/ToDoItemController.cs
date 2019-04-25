@@ -65,7 +65,7 @@ namespace ToDoApi.Controllers
         }
 
         // POST api/<controller>
-        [HttpPost]
+        [HttpPost(Name = nameof(PostToDoItem))]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<ToDoItem>> PostToDoItem(ToDoItem item)
