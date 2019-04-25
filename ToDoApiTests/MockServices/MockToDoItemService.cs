@@ -51,9 +51,11 @@ namespace ToDoApiTests.MockServices
             throw new System.NotImplementedException();
         }
 
-        public Task<ToDoItem> GetToDoItemAsync(long id)
+        public async Task<ToDoItem> GetToDoItemAsync(long id)
         {
             var entity = _toDoItems.Where(a => a.Id == id).FirstOrDefault();
+
+            if (entity == null) return null;
 
             var item = new ToDoItem()
             {
@@ -61,7 +63,7 @@ namespace ToDoApiTests.MockServices
                 IsComplete = entity.IsComplete
             };
 
-            return Task.FromResult(item);
+            return item;
         }
 
         public Task<PagedResults<ToDoItem>> GetToDoItemsAsync(SortOptions<ToDoItem, ToDoItemEntity> sortOptions, PagingOptions pagingOptions, SearchOptions<ToDoItem, ToDoItemEntity> searchOptions)
