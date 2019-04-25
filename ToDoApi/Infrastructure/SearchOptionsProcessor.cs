@@ -74,7 +74,7 @@ namespace ToDoApi.Infrastructure
 
                 var left = ExpressionHelper.GetPropertyExpression(obj, propertyInfo);
 
-                var right = Expression.Constant(term.Value);
+                var right = term.ExpressionProvider.GetValue(term.Value);
 
                 var comparissonExpression = Expression.Equal(left, right);
 
@@ -105,7 +105,8 @@ namespace ToDoApi.Infrastructure
                     ValidSyntax = term.ValidSyntax,
                     Name = declaredTerm.Name,
                     Value = term.Value,
-                    Operator = term.Operator
+                    Operator = term.Operator,
+                    ExpressionProvider = declaredTerm.ExpressionProvider
                 };
             }
         }
@@ -114,6 +115,9 @@ namespace ToDoApi.Infrastructure
             typeof(T).GetTypeInfo()
             .DeclaredProperties
             .Where(p => p.GetCustomAttributes<SearchableAttribute>().Any())
-            .Select(p => new SearchTerm { Name = p.Name});
+            .Select(p => new SearchTerm {
+                Name = p.Name,
+                ExpressionProvider = p.GetCustomAttribute<SearchableAttribute>().ExpressionProvider;
+            });
     }
 }

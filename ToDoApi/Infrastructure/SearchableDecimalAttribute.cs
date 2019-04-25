@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 namespace ToDoApi.Infrastructure
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class SearchableAttribute : Attribute
+    public class SearchableDecimalAttribute : SearchableAttribute
     {
-        public ISearchExpressionProvider ExpressionProvider { get; set; } 
-            = new DefaultSearchExpressionProvider();
-
+        public SearchableDecimalAttribute()
+        {
+            ExpressionProvider = new DecimalToIntSearchExpressionProvider();
+        }
     }
 }

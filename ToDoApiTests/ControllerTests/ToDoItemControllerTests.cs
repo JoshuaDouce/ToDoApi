@@ -33,13 +33,15 @@ namespace ToDoApiTests.ControllerTests
         }
 
         [Fact]
-        public async void GetById_ExistingId_ReturnsToDoItem()
+        public async void GetById_ExistingId_ReturnsCorrectToDoItem()
         {
             //Act
-            var result = await _toDoItemController.GetToDoItem(1);
+            var result = await _toDoItemController.GetToDoItem(3);
 
             // Assert
             Assert.IsType<ToDoItem>(result.Value);
+            Assert.Equal("Item Three", result.Value.Name);
+            Assert.True(result.Value.IsComplete);
         }
     }
 }
