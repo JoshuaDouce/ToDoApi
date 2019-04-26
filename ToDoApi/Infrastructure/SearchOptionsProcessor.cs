@@ -117,7 +117,7 @@ namespace ToDoApi.Infrastructure
             .Where(p => p.GetCustomAttributes<SearchableAttribute>().Any())
             .Select(p => new SearchTerm {
                 Name = p.Name,
-                ExpressionProvider = p.GetCustomAttribute<SearchableAttribute>().ExpressionProvider;
+                ExpressionProvider = p.GetCustomAttribute<SearchableAttribute>().ExpressionProvider,
             });
     }
 }
