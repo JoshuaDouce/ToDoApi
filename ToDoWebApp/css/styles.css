@@ -1,0 +1,95 @@
+/*Color palette*/
+:root{
+    --dark-primary-color: #0288D1;
+    --default-primary: #03A9F4;
+    --light-primary: #B3E5FC;
+    --text-primary: #FFFFFF;
+    --accent: #607D8B;
+    --primary-text: #212121;
+    --secondary-text-color: #757575;
+    --divider-color: #BDBDBD;
+}
+
+/* Page Wide Style*/
+body{
+    height: 100%;
+    font-family: 'Merriweather Sans', sans-serif;
+}
+
+/* Header Styling*/
+header{
+    background-color: var(--default-primary);
+}
+
+#top-banner{
+    height: 10px;
+    background-color: var(--dark-primary-color);
+}
+
+#title{
+    text-align: center;
+    color: var(--text-primary);
+    padding: 10px;
+    margin: 0;
+}
+
+/*Main list styling*/
+#main-content-container, #list-container{
+    padding: 5px;
+}
+
+.todo-item-row{
+    width: 90%;
+    margin: auto;
+    margin-top: 7.5px;
+    margin-bottom: 7.5px;
+}
+
+.todo-item-row > .col-md > button{
+    float: right;
+    margin: 5px;
+}
+
+#list-buttons-row{
+    margin: auto;
+    margin-top: 15px;
+    width: 90%;
+}
+
+label{
+    font-weight: bold;
+}
+
+#list-buttons-row > .col-md > button{
+    float: right;
+}
+
+.iscomplete-checkbox{
+    margin: 5px;
+}
+
+#clear-btn, #add-btn {
+    width: 25%;
+}
+
+#add-btn{
+    margin-right: 10px;
+}
+
+/*Add item modal styles*/
+#new-todo-item{
+    border-radius: 5%;
+    padding: 5px;
+}
+
+/*Footer Styling*/
+footer {
+    height: 60px;
+    background-color: var(--default-primary);
+    text-align: center;
+    color: var(--text-primary);
+}
+
+footer > p {
+    padding-top: 10px;
+}
