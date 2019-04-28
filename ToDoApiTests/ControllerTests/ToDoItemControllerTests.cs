@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Moq;
+using System.Threading.Tasks;
 using ToDoApi.Controllers;
 using ToDoApi.Models;
 using ToDoApi.Services;
-using ToDoApiTests.MockServices;
 using Xunit;
 
 namespace ToDoApiTests.ControllerTests
@@ -11,20 +12,26 @@ namespace ToDoApiTests.ControllerTests
     public class ToDoItemControllerTests
     {
         ToDoItemController _toDoItemController;
-        IToDoItemService _toDoItemService;
+        private Mock<IToDoItemService> _toDoItemService;
 
         public ToDoItemControllerTests()
         {
-            _toDoItemService = new MockToDoItemService();
+            _toDoItemService = new Mock<IToDoItemService>();
+
             var options = Options.Create(new PagingOptions() {
                 Offset = 0,
                 Limit = 5
             });
-            _toDoItemController = new ToDoItemController(_toDoItemService, options);
+
+            _toDoItemController = new ToDoItemController(_toDoItemService.Object, options);
         }
 
         [Fact]
         public async void GetById_UnknownId_ReturnsNotFound() {
+            //Arrange
+            _toDoItemService.Setup(r => r.GetToDoItemAsync(10))
+                .Returns(Task.FromResult<ToDoItem>(null));
+
             //Act
             var result = await _toDoItemController.GetToDoItem(10);
 
@@ -35,6 +42,14 @@ namespace ToDoApiTests.ControllerTests
         [Fact]
         public async void GetById_ExistingId_ReturnsCorrectToDoItem()
         {
+            //Arrange
+            _toDoItemService.Setup(r => r.GetToDoItemAsync(3))
+                .Returns(Task.FromResult(
+                    new ToDoItem {
+                        Name = "Item Three",
+                        IsComplete = true
+                    }));
+
             //Act
             var result = await _toDoItemController.GetToDoItem(3);
 
